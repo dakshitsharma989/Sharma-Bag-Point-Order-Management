@@ -1,0 +1,14 @@
+{
+  "name": "Sharma Bag Point",
+  "short_name": "SBP",
+  "description": "Sharma Bag Point Order Management",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#142b4a",
+  "theme_color": "#142b4a",
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

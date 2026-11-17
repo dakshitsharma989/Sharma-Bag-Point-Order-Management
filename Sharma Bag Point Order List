@@ -1,0 +1,261 @@
+From: <Saved by Blink>
+Snapshot-Content-Location: https://dakshitsharma989.github.io/Sharma-Bag-Point-Order-Management/
+Subject: Sharma Bag Point Order List
+Date: Tue, 17 Nov 2026 03:07:27 GMT
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----MultipartBoundary--TcyGsNsnoNiluH0e7pjnaijgADE1qgWFEPmSltOVkn----"
+
+
+------MultipartBoundary--TcyGsNsnoNiluH0e7pjnaijgADE1qgWFEPmSltOVkn----
+Content-Type: text/html
+Content-ID: <frame-B442D5C54CF6B0B85189B948B48FEF9F@mhtml.blink>
+Content-Transfer-Encoding: binary
+Content-Location: https://dakshitsharma989.github.io/Sharma-Bag-Point-Order-Management/
+
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link rel="stylesheet" type="text/css" href="cid:css-c9da4666-d5f7-46d2-a6ad-4acad882701d@mhtml.blink" />
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#142b4a">
+<title>Sharma Bag Point Order List</title>
+
+</head>
+<body>
+<header>
+ <div class="brand"><div class="logo">👜</div><div><h1>SHARMA BAG POINT ORDER LIST</h1><p>CUSTOMER &amp; ORDER MANAGEMENT</p></div></div>
+ <div class="status" id="connection">● Offline-ready · Saved on this device</div>
+</header>
+<main>
+ <div class="notice"><b>First trial version:</b> Your records are saved in this browser on this device. This version works offline, but it does not yet sync between different phones/computers. Use Backup to move or protect records.</div>
+ <nav class="tabs no-print">
+  <button class="tab active" data-tab="homePanel">⌂ Home</button>
+  <button class="tab" data-tab="ordersPanel">▤ All Orders</button>
+  <button class="tab" data-tab="backupPanel">↥ Backup</button>
+ </nav>
+
+ <section id="homePanel" class="panel active">
+  <div class="card">
+   <h2>Find a Customer</h2>
+   <div class="home-search"><input id="searchPhone" type="tel" inputmode="tel" placeholder="Search by customer phone number"><button class="btn" id="searchBtn">Search</button></div>
+   <div id="searchResults" class="muted" style="margin-top:10px">Enter a phone number to see customer details and previous orders.</div>
+  </div>
+  <div class="card shop-card" style="margin-top:14px">
+   <h2>Welcome to Sharma Bag Point</h2>
+   <div class="shop-detail"><span>🏪</span><div><b>SHARMA BAG POINT</b><div class="muted">Your shop's order and customer desk</div></div></div>
+   <div class="shop-detail"><span>📍</span><div><b>Shop Location</b><div class="muted">Motor Market, near the main bus stand, Manimajra, Chandigarh, India</div><a href="https://maps.app.goo.gl/BapeB5ML3mppuFUN8" target="_blank" rel="noopener">Open shop location in Google Maps</a></div></div>
+   <div class="shop-detail"><span>📞</span><div><b>Contact</b><div class="muted">Add the shop phone number when finalising the branding.</div></div></div>
+   <div class="actions"><button class="btn gold">＋ Create New Order</button></div>
+  </div>
+  <div class="stats" style="margin-top:14px">
+   <div class="stat"><b id="totalOrders">0</b><span>Total orders</span></div>
+   <div class="stat"><b id="pendingOrders">0</b><span>Pending / in progress</span></div>
+   <div class="stat"><b id="completedOrders">0</b><span>Delivered orders</span></div>
+  </div>
+  <div class="card"><h2>Recent Orders</h2><div id="recentOrders"><p class="muted">No orders yet.</p></div></div>
+ </section>
+
+ <section id="newPanel" class="panel">
+  <div class="card">
+   <h2 id="formTitle">Create New Order</h2>
+   <form id="orderForm">
+    
+    <div class="row">
+     <div class="field"><label for="date">Order date (automatic)</label><input id="date" type="date" required=""></div>
+     <div class="field"><label for="phone">Customer phone number *</label><input id="phone" type="tel" inputmode="tel" placeholder="Enter phone number" required=""></div>
+    </div>
+    <div class="row">
+     <div class="field"><label for="customer">Customer name *</label><input id="customer" placeholder="Customer full name" required=""></div>
+     <div class="field"><label for="quantity">Bag quantity</label><input id="quantity" type="number" min="1" value="1"></div>
+    </div>
+    <div class="field"><label for="notes">Customer / order notes</label><textarea id="notes" placeholder="Special instructions or customer notes"></textarea></div>
+    <h3>Bag specifications</h3>
+    <div class="three">
+     <div class="field"><label for="size">Size</label><input id="size" placeholder="e.g. 14 x 16"></div>
+     <div class="field"><label for="colour">Colour</label><input id="colour" placeholder="e.g. Navy blue"></div>
+     <div class="field"><label for="fibre">Fibre / material</label><input id="fibre" placeholder="e.g. Non-woven"></div>
+    </div>
+    <div class="row">
+     <div class="field"><label for="material">Other material details</label><input id="material" placeholder="Fabric, handle, printing, etc."></div>
+     <div class="field"><label for="delivery">Expected delivery date</label><input id="delivery" type="date"></div>
+    </div>
+    <div class="field"><label for="photo">Design reference photo (optional)</label><input id="photo" type="file" accept="image/*"><div class="hint">Small images are saved with the order on this device.</div></div>
+    <div class="row">
+     <div class="field"><label for="price">Price per bag (₹)</label><input id="price" type="number" min="0" step="0.01" placeholder="0"></div>
+     <div class="field"><label for="total">Total amount (₹)</label><input id="total" type="number" min="0" step="0.01" placeholder="Auto-calculated if price is entered"></div>
+    </div>
+    <div class="row">
+     <div class="field"><label>Order status</label><div class="choice" id="orderChoices">
+      <button type="button" data-value="Pending" class="selected">Pending</button><button type="button" data-value="In Progress">In Progress</button><button type="button" data-value="Ready">Ready</button><button type="button" data-value="Delivered">Delivered</button>
+     </div></div>
+     <div class="field"><label>Payment status</label><div class="choice" id="paymentChoices">
+      <button type="button" data-value="Not Paid" class="selected">Not Paid</button><button type="button" data-value="Partially Paid">Partially Paid</button><button type="button" data-value="Paid">Paid</button>
+     </div></div>
+    </div>
+    <div class="row">
+     <div class="field"><label for="advance">Advance received (₹)</label><input id="advance" type="number" min="0" step="0.01" value="0"></div>
+     <div class="field"><label for="balance">Balance remaining (₹)</label><input id="balance" type="number" readonly="" placeholder="Calculated automatically"></div>
+    </div>
+    <div class="actions">
+     <button class="btn gold" type="submit" id="saveBtn">Save Order</button>
+     <button class="btn secondary" type="button" id="clearBtn">Clear Form</button>
+    </div>
+   </form>
+  </div>
+ </section>
+
+ <section id="ordersPanel" class="panel">
+  <div class="card"><div class="order-top"><h2>All Orders</h2><button class="btn secondary no-print">Print List</button></div><div id="allOrders"><p class="muted">No orders saved yet.</p></div></div>
+ </section>
+
+ <section id="backupPanel" class="panel">
+  <div class="card">
+   <h2>Backup &amp; Restore</h2>
+   <p class="muted">Download a backup file regularly. You can import it later on this or another device. Importing replaces the records currently in this browser.</p>
+   <div class="actions"><button class="btn" id="exportBtn">Download Backup</button><label class="btn secondary" for="importFile" style="cursor:pointer">Restore Backup</label><input id="importFile" class="hidden" type="file" accept="application/json"></div>
+   <p class="hint">Keep backup files private because they contain customer names and phone numbers.</p>
+  </div>
+ </section>
+</main>
+<footer>SHARMA BAG POINT ORDER LIST · Trial Version</footer>
+<button class="fab no-print" type="button" title="Create new order" aria-label="Create new order">＋</button>
+
+
+</body></html>
+------MultipartBoundary--TcyGsNsnoNiluH0e7pjnaijgADE1qgWFEPmSltOVkn----
+Content-Type: text/css
+Content-Transfer-Encoding: binary
+Content-Location: cid:css-c9da4666-d5f7-46d2-a6ad-4acad882701d@mhtml.blink
+
+@charset "utf-8";
+
+:root { --navy: #142b4a; --blue: #24558b; --gold: #e7b653; --bg: #f3f6fa; --ink: #182435; --muted: #66758a; --line: #dce4ee; --green: #16845b; --red: #c34d4d; --white: #fff; }
+
+* { box-sizing: border-box; }
+
+body { margin: 0px; background: var(--bg); color: var(--ink); font: 15px / 1.45 system-ui, -apple-system, "Segoe UI", Roboto, Arial; }
+
+header { background: linear-gradient(120deg, rgb(16, 36, 64), rgb(36, 79, 125)); color: white; padding: 20px max(18px, 50% - 580px); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+.brand { display: flex; align-items: center; gap: 13px; }
+
+.logo { width: 48px; height: 48px; border: 2px solid var(--gold); border-radius: 13px; display: grid; place-items: center; font-size: 25px; }
+
+.brand h1 { font-size: 21px; letter-spacing: 0.5px; margin: 0px; }
+
+.brand p { margin: 2px 0px 0px; color: rgb(213, 225, 239); font-size: 12px; letter-spacing: 1.5px; }
+
+.status { font-size: 12px; padding: 7px 11px; border: 1px solid rgba(255, 255, 255, 0.333); border-radius: 20px; }
+
+main { max-width: 1160px; margin: 22px auto; padding: 0px 16px 40px; }
+
+.tabs { display: flex; gap: 8px; overflow: auto; margin-bottom: 18px; }
+
+.tab { border: 1px solid var(--line); background: white; color: var(--navy); border-radius: 10px; padding: 11px 16px; font-weight: 700; white-space: nowrap; cursor: pointer; }
+
+.tab.active { background: var(--navy); color: white; border-color: var(--navy); }
+
+.panel { display: none; }
+
+.panel.active { display: block; }
+
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0px, 1fr)); gap: 14px; }
+
+.full { grid-column: 1 / -1; }
+
+.card { background: white; border: 1px solid var(--line); border-radius: 15px; padding: 18px; box-shadow: rgba(26, 53, 80, 0.04) 0px 4px 16px; }
+
+.card h2 { font-size: 18px; margin: 0px 0px 14px; color: var(--navy); }
+
+.card h3 { font-size: 15px; margin: 0px 0px 10px; color: var(--navy); }
+
+label { display: block; font-size: 13px; font-weight: 700; color: rgb(64, 81, 106); margin: 0px 0px 5px; }
+
+input, textarea, select { width: 100%; padding: 11px 12px; border: 1px solid rgb(207, 217, 229); border-radius: 9px; background: rgb(255, 255, 255); color: var(--ink); font: inherit; min-width: 0px; }
+
+textarea { min-height: 76px; resize: vertical; }
+
+.field { margin-bottom: 12px; }
+
+.row { display: grid; grid-template-columns: repeat(2, minmax(0px, 1fr)); gap: 12px; }
+
+.three { display: grid; grid-template-columns: repeat(3, minmax(0px, 1fr)); gap: 10px; }
+
+.actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+
+.btn { border: 0px; border-radius: 9px; padding: 11px 15px; font-weight: 750; cursor: pointer; background: var(--navy); color: white; }
+
+.btn.secondary { background: rgb(234, 240, 247); color: var(--navy); }
+
+.btn.gold { background: var(--gold); color: rgb(57, 43, 18); }
+
+.btn.danger { background: rgb(255, 240, 240); color: var(--red); }
+
+.btn.small { padding: 7px 10px; font-size: 12px; }
+
+.choice { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.choice button { background: rgb(241, 244, 248); border: 1px solid rgb(214, 223, 235); color: rgb(52, 68, 90); border-radius: 9px; padding: 9px 13px; font-weight: 700; cursor: pointer; }
+
+.choice button.selected { background: var(--navy); border-color: var(--navy); color: white; }
+
+.hint { font-size: 12px; color: var(--muted); margin-top: 5px; }
+
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 15px; }
+
+.stat { background: white; border: 1px solid var(--line); border-radius: 13px; padding: 15px; }
+
+.stat b { font-size: 25px; color: var(--navy); display: block; }
+
+.stat span { font-size: 12px; color: var(--muted); }
+
+.result { border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin-top: 10px; background: rgb(251, 252, 254); }
+
+.order { border: 1px solid var(--line); border-radius: 11px; padding: 13px; margin: 10px 0px; background: white; }
+
+.order-top { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+
+.pill { font-size: 11px; border-radius: 20px; padding: 4px 8px; background: rgb(234, 240, 247); color: var(--navy); font-weight: 800; }
+
+.pill.green { background: rgb(231, 246, 239); color: rgb(17, 115, 78); }
+
+.pill.red { background: rgb(255, 240, 240); color: rgb(181, 62, 62); }
+
+.muted { color: var(--muted); font-size: 13px; }
+
+.hidden { display: none !important; }
+
+.notice { padding: 11px 13px; background: rgb(255, 248, 232); border: 1px solid rgb(240, 223, 182); border-radius: 10px; color: rgb(112, 85, 28); font-size: 13px; margin-bottom: 15px; }
+
+.home-search { display: flex; gap: 8px; }
+
+.home-search input { flex: 1 1 0%; }
+
+.shop-card { background: linear-gradient(135deg, rgb(255, 255, 255), rgb(244, 247, 251)); border: 1px dashed rgb(158, 175, 196); }
+
+.shop-detail { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0px; border-bottom: 1px dashed rgb(215, 224, 235); }
+
+.shop-detail:last-child { border-bottom: 0px; }
+
+.fab { position: fixed; right: 22px; bottom: 22px; width: 60px; height: 60px; border: 0px; border-radius: 50%; background: var(--gold); color: rgb(45, 37, 23); font-size: 34px; line-height: 1; box-shadow: rgba(23, 43, 74, 0.333) 0px 7px 22px; cursor: pointer; z-index: 20; }
+
+.fab:active { transform: scale(0.96); }
+
+footer { text-align: center; color: rgb(128, 144, 164); font-size: 12px; padding: 20px; }
+
+@media (max-width: 700px) {
+  .grid, .row { grid-template-columns: 1fr; }
+  .three { grid-template-columns: 1fr 1fr; }
+  .stats { grid-template-columns: 1fr 1fr; }
+  .stats .stat:last-child { grid-column: 1 / -1; }
+  header { padding: 17px; }
+  .brand h1 { font-size: 18px; }
+}
+
+@media print {
+  header, .tabs, .no-print, footer { display: none !important; }
+  body { background: white; }
+  .panel { display: none !important; }
+  #ordersPanel { display: block !important; }
+  .card { box-shadow: none; }
+}
+------MultipartBoundary--TcyGsNsnoNiluH0e7pjnaijgADE1qgWFEPmSltOVkn------
