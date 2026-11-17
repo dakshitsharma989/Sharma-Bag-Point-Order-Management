@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#142b4a">
+<title>Sharma Bag Point Order List</title>
+<style>
+:root{--navy:#142b4a;--blue:#24558b;--gold:#e7b653;--bg:#f3f6fa;--ink:#182435;--muted:#66758a;--line:#dce4ee;--green:#16845b;--red:#c34d4d;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial}
+header{background:linear-gradient(120deg,#102440,#244f7d);color:white;padding:20px max(18px,calc((100% - 1160px)/2));display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:13px}.logo{width:48px;height:48px;border:2px solid var(--gold);border-radius:13px;display:grid;place-items:center;font-size:25px}.brand h1{font-size:21px;letter-spacing:.5px;margin:0}.brand p{margin:2px 0 0;color:#d5e1ef;font-size:12px;letter-spacing:1.5px}.status{font-size:12px;padding:7px 11px;border:1px solid #ffffff55;border-radius:20px}
+main{max-width:1160px;margin:22px auto;padding:0 16px 40px}.tabs{display:flex;gap:8px;overflow:auto;margin-bottom:18px}.tab{border:1px solid var(--line);background:white;color:var(--navy);border-radius:10px;padding:11px 16px;font-weight:700;white-space:nowrap;cursor:pointer}.tab.active{background:var(--navy);color:white;border-color:var(--navy)}
+.panel{display:none}.panel.active{display:block}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.full{grid-column:1/-1}.card{background:white;border:1px solid var(--line);border-radius:15px;padding:18px;box-shadow:0 4px 16px #1a35500a}.card h2{font-size:18px;margin:0 0 14px;color:var(--navy)}.card h3{font-size:15px;margin:0 0 10px;color:var(--navy)}
+label{display:block;font-size:13px;font-weight:700;color:#40516a;margin:0 0 5px}input,textarea,select{width:100%;padding:11px 12px;border:1px solid #cfd9e5;border-radius:9px;background:#fff;color:var(--ink);font:inherit;min-width:0}textarea{min-height:76px;resize:vertical}.field{margin-bottom:12px}.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.btn{border:0;border-radius:9px;padding:11px 15px;font-weight:750;cursor:pointer;background:var(--navy);color:white}.btn.secondary{background:#eaf0f7;color:var(--navy)}.btn.gold{background:var(--gold);color:#392b12}.btn.danger{background:#fff0f0;color:var(--red)}.btn.small{padding:7px 10px;font-size:12px}
+.choice{display:flex;gap:8px;flex-wrap:wrap}.choice button{background:#f1f4f8;border:1px solid #d6dfeb;color:#34445a;border-radius:9px;padding:9px 13px;font-weight:700;cursor:pointer}.choice button.selected{background:var(--navy);border-color:var(--navy);color:white}
+.hint{font-size:12px;color:var(--muted);margin-top:5px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:15px}.stat{background:white;border:1px solid var(--line);border-radius:13px;padding:15px}.stat b{font-size:25px;color:var(--navy);display:block}.stat span{font-size:12px;color:var(--muted)}
+.result{border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:10px;background:#fbfcfe}.order{border:1px solid var(--line);border-radius:11px;padding:13px;margin:10px 0;background:white}.order-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.pill{font-size:11px;border-radius:20px;padding:4px 8px;background:#eaf0f7;color:var(--navy);font-weight:800}.pill.green{background:#e7f6ef;color:#11734e}.pill.red{background:#fff0f0;color:#b53e3e}.muted{color:var(--muted);font-size:13px}.hidden{display:none!important}.notice{padding:11px 13px;background:#fff8e8;border:1px solid #f0dfb6;border-radius:10px;color:#70551c;font-size:13px;margin-bottom:15px}.home-search{display:flex;gap:8px}.home-search input{flex:1}.shop-card{background:linear-gradient(135deg,#fff,#f4f7fb);border:1px dashed #9eafc4}.shop-detail{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px dashed #d7e0eb}.shop-detail:last-child{border-bottom:0}.fab{position:fixed;right:22px;bottom:22px;width:60px;height:60px;border:0;border-radius:50%;background:var(--gold);color:#2d2517;font-size:34px;line-height:1;box-shadow:0 7px 22px #172b4a55;cursor:pointer;z-index:20}.fab:active{transform:scale(.96)}
+footer{text-align:center;color:#8090a4;font-size:12px;padding:20px}
+@media(max-width:700px){.grid,.row{grid-template-columns:1fr}.three{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:1/-1}header{padding:17px}.brand h1{font-size:18px}}
+@media print{header,.tabs,.no-print,footer{display:none!important}body{background:white}.panel{display:none!important}#ordersPanel{display:block!important}.card{box-shadow:none}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand"><div class="logo">👜</div><div><h1>SHARMA BAG POINT ORDER LIST</h1><p>CUSTOMER &amp; ORDER MANAGEMENT</p></div></div>
+ <div class="status" id="connection">● Offline-ready · Saved on this device</div>
+</header>
+<main>
+ <div class="notice"><b>First trial version:</b> Your records are saved in this browser on this device. This version works offline, but it does not yet sync between different phones/computers. Use Backup to move or protect records.</div>
+ <nav class="tabs no-print">
+  <button class="tab active" data-tab="homePanel">⌂ Home</button>
+  <button class="tab" data-tab="ordersPanel">▤ All Orders</button>
+  <button class="tab" data-tab="backupPanel">↥ Backup</button>
+ </nav>
+
+ <section id="homePanel" class="panel active">
+  <div class="card">
+   <h2>Find a Customer</h2>
+   <div class="home-search"><input id="searchPhone" type="tel" inputmode="tel" placeholder="Search by customer phone number"><button class="btn" id="searchBtn">Search</button></div>
+   <div id="searchResults" class="muted" style="margin-top:10px">Enter a phone number to see customer details and previous orders.</div>
+  </div>
+  <div class="card shop-card" style="margin-top:14px">
+   <h2>Welcome to Sharma Bag Point</h2>
+   <div class="shop-detail"><span>🏪</span><div><b>SHARMA BAG POINT</b><div class="muted">Your shop's order and customer desk</div></div></div>
+   <div class="shop-detail"><span>📍</span><div><b>Shop Location</b><div class="muted">Motor Market, near the main bus stand, Manimajra, Chandigarh, India</div><a href="https://maps.app.goo.gl/BapeB5ML3mppuFUN8" target="_blank" rel="noopener">Open shop location in Google Maps</a></div></div>
+   <div class="shop-detail"><span>📞</span><div><b>Contact</b><div class="muted">Add the shop phone number when finalising the branding.</div></div></div>
+   <div class="actions"><button class="btn gold" onclick="showTab('newPanel')">＋ Create New Order</button></div>
+  </div>
+  <div class="stats" style="margin-top:14px">
+   <div class="stat"><b id="totalOrders">0</b><span>Total orders</span></div>
+   <div class="stat"><b id="pendingOrders">0</b><span>Pending / in progress</span></div>
+   <div class="stat"><b id="completedOrders">0</b><span>Delivered orders</span></div>
+  </div>
+  <div class="card"><h2>Recent Orders</h2><div id="recentOrders"></div></div>
+ </section>
+
+ <section id="newPanel" class="panel">
+  <div class="card">
+   <h2 id="formTitle">Create New Order</h2>
+   <form id="orderForm">
+    <input type="hidden" id="editId">
+    <div class="row">
+     <div class="field"><label for="date">Order date (automatic)</label><input id="date" type="date" required></div>
+     <div class="field"><label for="phone">Customer phone number *</label><input id="phone" type="tel" inputmode="tel" placeholder="Enter phone number" required></div>
+    </div>
+    <div class="row">
+     <div class="field"><label for="customer">Customer name *</label><input id="customer" placeholder="Customer full name" required></div>
+     <div class="field"><label for="quantity">Bag quantity</label><input id="quantity" type="number" min="1" value="1"></div>
+    </div>
+    <div class="field"><label for="notes">Customer / order notes</label><textarea id="notes" placeholder="Special instructions or customer notes"></textarea></div>
+    <h3>Bag specifications</h3>
+    <div class="three">
+     <div class="field"><label for="size">Size</label><input id="size" placeholder="e.g. 14 x 16"></div>
+     <div class="field"><label for="colour">Colour</label><input id="colour" placeholder="e.g. Navy blue"></div>
+     <div class="field"><label for="fibre">Fibre / material</label><input id="fibre" placeholder="e.g. Non-woven"></div>
+    </div>
+    <div class="row">
+     <div class="field"><label for="material">Other material details</label><input id="material" placeholder="Fabric, handle, printing, etc."></div>
+     <div class="field"><label for="delivery">Expected delivery date</label><input id="delivery" type="date"></div>
+    </div>
+    <div class="field"><label for="photo">Design reference photo (optional)</label><input id="photo" type="file" accept="image/*"><div class="hint">Small images are saved with the order on this device.</div></div>
+    <div class="row">
+     <div class="field"><label for="price">Price per bag (₹)</label><input id="price" type="number" min="0" step="0.01" placeholder="0"></div>
+     <div class="field"><label for="total">Total amount (₹)</label><input id="total" type="number" min="0" step="0.01" placeholder="Auto-calculated if price is entered"></div>
+    </div>
+    <div class="row">
+     <div class="field"><label>Order status</label><div class="choice" id="orderChoices">
+      <button type="button" data-value="Pending" class="selected">Pending</button><button type="button" data-value="In Progress">In Progress</button><button type="button" data-value="Ready">Ready</button><button type="button" data-value="Delivered">Delivered</button>
+     </div></div>
+     <div class="field"><label>Payment status</label><div class="choice" id="paymentChoices">
+      <button type="button" data-value="Not Paid" class="selected">Not Paid</button><button type="button" data-value="Partially Paid">Partially Paid</button><button type="button" data-value="Paid">Paid</button>
+     </div></div>
+    </div>
+    <div class="row">
+     <div class="field"><label for="advance">Advance received (₹)</label><input id="advance" type="number" min="0" step="0.01" value="0"></div>
+     <div class="field"><label for="balance">Balance remaining (₹)</label><input id="balance" type="number" readonly placeholder="Calculated automatically"></div>
+    </div>
+    <div class="actions">
+     <button class="btn gold" type="submit" id="saveBtn">Save Order</button>
+     <button class="btn secondary" type="button" id="clearBtn">Clear Form</button>
+    </div>
+   </form>
+  </div>
+ </section>
+
+ <section id="ordersPanel" class="panel">
+  <div class="card"><div class="order-top"><h2>All Orders</h2><button class="btn secondary no-print" onclick="window.print()">Print List</button></div><div id="allOrders"></div></div>
+ </section>
+
+ <section id="backupPanel" class="panel">
+  <div class="card">
+   <h2>Backup & Restore</h2>
+   <p class="muted">Download a backup file regularly. You can import it later on this or another device. Importing replaces the records currently in this browser.</p>
+   <div class="actions"><button class="btn" id="exportBtn">Download Backup</button><label class="btn secondary" for="importFile" style="cursor:pointer">Restore Backup</label><input id="importFile" class="hidden" type="file" accept="application/json"></div>
+   <p class="hint">Keep backup files private because they contain customer names and phone numbers.</p>
+  </div>
+ </section>
+</main>
+<footer>SHARMA BAG POINT ORDER LIST · Trial Version</footer>
+<button class="fab no-print" type="button" title="Create new order" aria-label="Create new order" onclick="showTab('newPanel')">＋</button>
+<script>
+const $=id=>document.getElementById(id);
+const KEY='sharmaBagPointOrders_v1';
+let orders=load(), orderStatus='Pending', paymentStatus='Not Paid', currentPhoto='';
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return []}}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(orders));return true}catch(e){alert('Could not save. Storage may be full. Please download a backup and try a smaller photo.');return false}}
+function today(){let d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function money(n){return '₹'+(Number(n)||0).toLocaleString('en-IN',{maximumFractionDigits:2})}
+function setChoices(id,value){document.querySelectorAll('#'+id+' button').forEach(b=>b.classList.toggle('selected',b.dataset.value===value))}
+function bindChoices(id,fn){document.querySelectorAll('#'+id+' button').forEach(b=>b.addEventListener('click',()=>{fn(b.dataset.value);setChoices(id,b.dataset.value)}))}
+bindChoices('orderChoices',v=>orderStatus=v);bindChoices('paymentChoices',v=>paymentStatus=v);
+function updateTotals(){let q=Number($('quantity').value)||0,p=Number($('price').value)||0,t=$('total');if(document.activeElement!==t)t.value=p&&q?p*q:'';let total=Number(t.value)||0;$('balance').value=Math.max(0,total-(Number($('advance').value)||0)).toFixed(2)}
+['quantity','price','total','advance'].forEach(id=>$(id).addEventListener('input',updateTotals));
+$('date').value=today();
+$('phone').addEventListener('blur',()=>{let phone=$('phone').value.trim();if(!phone)return;let old=orders.filter(o=>o.phone===phone).sort((a,b)=>b.created.localeCompare(a.created))[0];if(old&&!$('customer').value){$('customer').value=old.customer;$('notes').value=old.customerNotes||''}});
+$('photo').addEventListener('change',async e=>{let f=e.target.files[0];if(!f){currentPhoto='';return}if(f.size>450000){alert('Please choose an image smaller than 450 KB for this trial version.');e.target.value='';return}currentPhoto=await new Promise((res,rej)=>{let r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f)})});
+function resetForm(){ $('orderForm').reset();$('editId').value='';$('date').value=today();$('quantity').value=1;$('advance').value=0;currentPhoto='';orderStatus='Pending';paymentStatus='Not Paid';setChoices('orderChoices',orderStatus);setChoices('paymentChoices',paymentStatus);$('formTitle').textContent='Create New Order';$('saveBtn').textContent='Save Order';updateTotals()}
+$('clearBtn').onclick=resetForm;
+$('orderForm').addEventListener('submit',e=>{e.preventDefault();let phone=$('phone').value.trim(),name=$('customer').value.trim();if(!phone||!name)return alert('Please enter customer name and phone number.');let edit=$('editId').value;let existing=edit?orders.find(o=>o.id===edit):null;let record={id:edit||String(Date.now())+'-'+Math.random().toString(36).slice(2,7),created:existing?.created||new Date().toISOString(),date:$('date').value||today(),phone,customer:name,quantity:Number($('quantity').value)||1,customerNotes:$('notes').value,size:$('size').value,colour:$('colour').value,fibre:$('fibre').value,material:$('material').value,delivery:$('delivery').value,price:Number($('price').value)||0,total:Number($('total').value)||0,advance:Number($('advance').value)||0,balance:Number($('balance').value)||0,orderStatus,paymentStatus,photo:currentPhoto||existing?.photo||''};if(existing)orders=orders.map(o=>o.id===edit?record:o);else orders.push(record);if(persist()){alert(existing?'Order updated!':'Order saved!');resetForm();renderAll();showTab('ordersPanel')}});
+function orderCard(o){return `<div class="order"><div class="order-top"><div><b>${esc(o.customer)}</b> <span class="muted">· ${esc(o.phone)}</span><div class="muted">${esc(o.date)} · ${o.quantity} bag(s)</div></div><div><span class="pill">${esc(o.orderStatus)}</span> <span class="pill ${o.paymentStatus==='Paid'?'green':o.paymentStatus==='Not Paid'?'red':''}">${esc(o.paymentStatus)}</span></div></div><div class="muted" style="margin-top:8px">Size: ${esc(o.size||'—')} · Colour: ${esc(o.colour||'—')} · Fibre: ${esc(o.fibre||'—')}</div><div class="muted">Total: ${money(o.total)} · Advance: ${money(o.advance)} · Balance: ${money(o.balance)}</div>${o.delivery?`<div class="muted">Expected delivery: ${esc(o.delivery)}</div>`:''}${o.customerNotes?`<div class="muted">Notes: ${esc(o.customerNotes)}</div>`:''}${o.photo?`<p><a href="${o.photo}" target="_blank">View reference photo</a></p>`:''}<div class="actions no-print"><button class="btn small secondary" onclick="editOrder('${o.id}')">Edit</button><button class="btn small secondary" onclick="printOne('${o.id}')">Print</button><button class="btn small danger" onclick="deleteOrder('${o.id}')">Delete</button></div></div>`}
+function renderAll(){let sorted=[...orders].sort((a,b)=>(b.date||'').localeCompare(a.date||''));$('allOrders').innerHTML=sorted.length?sorted.map(orderCard).join(''):'<p class="muted">No orders saved yet.</p>';$('totalOrders').textContent=orders.length;$('pendingOrders').textContent=orders.filter(o=>o.orderStatus==='Pending'||o.orderStatus==='In Progress').length;$('completedOrders').textContent=orders.filter(o=>o.orderStatus==='Delivered').length;$('recentOrders').innerHTML=sorted.slice(0,5).map(orderCard).join('')||'<p class="muted">No orders yet.</p>'}
+function showTab(id){document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===id));if(id==='ordersPanel'||id==='homePanel')renderAll()}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>showTab(t.dataset.tab));
+function search(){let p=$('searchPhone').value.trim();if(!p){$('searchResults').textContent='Please enter a phone number.';return}let found=orders.filter(o=>o.phone===p).sort((a,b)=>(b.date||'').localeCompare(a.date||''));if(!found.length){$('searchResults').innerHTML='<p>No saved customer found with that exact phone number.</p>';return}let first=found[0];$('searchResults').innerHTML=`<div class="result"><b>${esc(first.customer)}</b><div class="muted">Phone: ${esc(first.phone)} · ${found.length} saved order(s)</div><div class="muted">Customer notes: ${esc(first.customerNotes||'—')}</div></div><h3 style="margin-top:16px">Previous orders</h3>${found.map(orderCard).join('')}` }
+$('searchBtn').onclick=search;$('searchPhone').addEventListener('keydown',e=>{if(e.key==='Enter')search()});
+window.editOrder=id=>{let o=orders.find(x=>x.id===id);if(!o)return;showTab('newPanel');$('editId').value=o.id;['date','phone','customer','quantity','size','colour','fibre','material','delivery','price','total','advance','balance'].forEach(k=>$(k).value=o[k]??'');$('notes').value=o.customerNotes||'';orderStatus=o.orderStatus;paymentStatus=o.paymentStatus;currentPhoto=o.photo||'';setChoices('orderChoices',orderStatus);setChoices('paymentChoices',paymentStatus);$('formTitle').textContent='Edit Order';$('saveBtn').textContent='Update Order';window.scrollTo({top:0,behavior:'smooth'})};
+window.deleteOrder=id=>{if(!confirm('Delete this order? This cannot be undone unless you have a backup.'))return;orders=orders.filter(o=>o.id!==id);persist();renderAll();search()};
+window.printOne=id=>{let o=orders.find(x=>x.id===id);if(!o)return;let w=window.open('','_blank');w.document.write(`<title>Sharma Bag Point Order</title><h1>SHARMA BAG POINT</h1><h3>Order Details</h3><p>Date: ${esc(o.date)}</p><p>Customer: ${esc(o.customer)}</p><p>Phone: ${esc(o.phone)}</p><p>Quantity: ${o.quantity}</p><p>Size: ${esc(o.size)}</p><p>Colour: ${esc(o.colour)}</p><p>Fibre: ${esc(o.fibre)}</p><p>Material: ${esc(o.material)}</p><p>Order status: ${esc(o.orderStatus)}</p><p>Payment status: ${esc(o.paymentStatus)}</p><p>Total: ${money(o.total)} | Advance: ${money(o.advance)} | Balance: ${money(o.balance)}</p><p>Notes: ${esc(o.notes)}</p>`);w.document.close();w.print()};
+$('exportBtn').onclick=()=>{let blob=new Blob([JSON.stringify({app:'Sharma Bag Point Order List',version:1,orders},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Sharma_Bag_Point_Backup_'+today()+'.json';a.click();URL.revokeObjectURL(a.href)};
+$('importFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let data=JSON.parse(await f.text()),list=Array.isArray(data)?data:data.orders;if(!Array.isArray(list))throw Error();if(!confirm('Restore this backup? Current records in this browser will be replaced.'))return;orders=list;persist();renderAll();alert('Backup restored.')}catch(err){alert('That backup file is not valid.')}e.target.value=''};
+renderAll();
+</script>
+</body></html>
