@@ -152,4 +152,15 @@ $('exportBtn').onclick=()=>{let blob=new Blob([JSON.stringify({app:'Sharma Bag P
 $('importFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let data=JSON.parse(await f.text()),list=Array.isArray(data)?data:data.orders;if(!Array.isArray(list))throw Error();if(!confirm('Restore this backup? Current records in this browser will be replaced.'))return;orders=list;persist();renderAll();alert('Backup restored.')}catch(err){alert('That backup file is not valid.')}e.target.value=''};
 renderAll();
 </script>
+ 
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js")
+      .then(() => console.log("CRL Offline Ready"))
+      .catch(error => console.log(error));
+  });
+}
+</script>
+
 </body></html>
