@@ -437,5 +437,379 @@ function refresh(){
 refresh();
 })();
 </script>
+<!-- SBP OWNER TOOLS UPGRADE -->
+<style>
+.sbp-dark{background:#101827!important;color:#edf2f7!important}
+.sbp-dark .card,.sbp-dark .order,.sbp-dark .sbp-record{
+  background:#1c293b!important;color:#edf2f7!important;
+  border-color:#34445b!important
+}
+.sbp-dark input,.sbp-dark select,.sbp-dark textarea{
+  background:#26364b!important;color:white!important;
+  border-color:#52647c!important
+}
+.sbp-owner-tools{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}
+.sbp-owner-tools button{padding:10px 14px;border:0;border-radius:9px;
+  background:#24558b;color:white;font-weight:600}
+</style>
 
+<script>
+(function(){
+'use strict';
+
+const $=id=>document.getElementById(id);
+const KEY='sbpOwnerTools_v1';
+let data={stock:[],expenses:[]};
+
+try{
+  data={...data,...JSON.parse(localStorage.getItem(KEY)||'{}')};
+}catch(e){}
+
+function save(){
+  try{
+    localStorage.setItem(KEY,JSON.stringify(data));
+    return true;
+  }catch(e){
+    alert('Storage is full. Download a backup first.');
+    return false;
+  }
+}
+function cash(n){
+  return '₹'+(Number(n)||0).toLocaleString('en-IN');
+}
+function esc2(s){
+  return String(s??'').replace(/[&<>"']/g,c=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+function day(){
+  return new Date().toISOString().slice(0,10);
+}
+function addPanel(id,title,html){
+  let p=document.createElement('section');
+  p.id=id;p.className='panel';
+  p.innerHTML='<div class="card"><h2>'+title+'</h2>'+html+'</div>';
+  $('homePanel').parentElement.appendChild(p);
+  return p;
+}
+
+/* OWNER TOOL NAVIGATION */
+const nav=$('homePanel').parentElement.querySelector('nav');
+[
+ ['stockPanel','📦 Stock'],
+ ['expensePanel','🧾 Expenses']
+].forEach(([id,label])=>{
+  let b=document.createElement('button');
+  b.className='tab';b.dataset.tab=id;b.textContent=label;
+  nav.appendChild(b);
+  b.onclick=()=>showTab(id);
+});
+
+/* STOCK MANAGEMENT */
+addPanel('stockPanel','📦 Stock Management',`
+<form id="stockForm">
+  <p>Product name</p>
+  <input id="sName" required placeholder="Bag name">
+  <p>Barcode / SKU</p>
+  <input id="sCode" placeholder="Barcode number">
+  <p>Quantity in stock</p>
+  <input id="sQty" type="number" min="0" required>
+  <p>Low-stock alert at</p>
+  <input id="sMin" type="number" min="0" value="5">
+  <p>Cost price</p>
+  <input id="sCost" type="number" min="0" value="0">
+  <p>Selling price</p>
+  <input id="sPrice" type="number" min="0" value="0">
+  <br><br>
+  <button class="btn gold">Save / Update Stock</button>
+  <button class="btn secondary" type="button" id="scanBarcode">📷 Scan barcode</button>
+</form>
+<p id="scanMessage"></p>
+<h3>Low-stock alerts</h3><div id="stockAlerts"></div>
+<h3>Stock list</h3><div id="stockList"></div>
+`);
+
+function renderStock(){
+  let low=data.stock.filter(x=>x.qty<=x.min);
+  $('stockAlerts').innerHTML=low.length
+    ?'<div class="notice">⚠️ Low stock: '+low.map(x=>
+      esc2(x.name)+' ('+x.qty+' left)').join(' · ')+'</div>'
+    :'<p>No low-stock alerts.</p>';
+
+  $('stockList').innerHTML=data.stock.length
+    ?data.stock.map(x=>`
+      <div class="sbp-record">
+        <b>${esc2(x.name)}</b>
+        <p>Barcode: ${esc2(x.code||'—')}</p>
+        <p>Quantity: ${x.qty} · Alert at: ${x.min}</p>
+        <p>Cost: ${cash(x.cost)} · Selling: ${cash(x.price)}</p>
+        <button class="btn small secondary"
+          onclick="sbpAdjustStock('${x.id}',-1)">−1</button>
+        <button class="btn small secondary"
+          onclick="sbpAdjustStock('${x.id}',1)">+1</button>
+        <button class="btn small danger"
+          onclick="sbpDeleteStock('${x.id}')">Delete</button>
+      </div>`).join('')
+    :'<p>No stock items saved yet.</p>';
+}
+
+$('stockForm').onsubmit=e=>{
+  e.preventDefault();
+  let code=$('sCode').value.trim();
+  let name=$('sName').value.trim();
+  let old=data.stock.find(x=>
+    (code&&x.code===code)||
+    (!code&&x.name.toLowerCase()===name.toLowerCase())
+  );
+  let row={
+    id:old?.id||String(Date.now()),
+    name,code,
+    qty:Number($('sQty').value)||0,
+    min:Number($('sMin').value)||0,
+    cost:Number($('sCost').value)||0,
+    price:Number($('sPrice').value)||0
+  };
+  if(old)data.stock=data.stock.map(x=>x.id===old.id?row:x);
+  else data.stock.push(row);
+  if(save()){e.target.reset();$('sMin').value=5;renderStock();}
+};
+
+window.sbpAdjustStock=(id,n)=>{
+  let x=data.stock.find(a=>a.id===id);
+  if(!x)return;
+  x.qty=Math.max(0,x.qty+n);
+  save();renderStock();
+};
+window.sbpDeleteStock=id=>{
+  if(confirm('Delete this stock item?')){
+    data.stock=data.stock.filter(x=>x.id!==id);
+    save();renderStock();
+  }
+};
+
+/* EXPENSE MANAGER */
+addPanel('expensePanel','🧾 Expense Manager',`
+<form id="expenseForm">
+  <p>Expense name</p>
+  <input id="eName" required placeholder="Rent, electricity, transport...">
+  <p>Category</p>
+  <select id="eCategory">
+    <option>Shop expense</option>
+    <option>Transport</option>
+    <option>Electricity</option>
+    <option>Rent</option>
+    <option>Other</option>
+  </select>
+  <p>Date</p><input id="eDate" type="date" required>
+  <p>Amount (₹)</p>
+  <input id="eAmount" type="number" min="0" required>
+  <p>Notes</p><textarea id="eNotes"></textarea>
+  <br><br><button class="btn gold">Save Expense</button>
+</form>
+<h3>Saved expenses</h3><div id="expenseList"></div>
+<div id="expenseTotal"></div>
+`);
+
+$('eDate').value=day();
+
+$('expenseForm').onsubmit=e=>{
+  e.preventDefault();
+  data.expenses.push({
+    id:String(Date.now()),
+    name:$('eName').value.trim(),
+    category:$('eCategory').value,
+    date:$('eDate').value,
+    amount:Number($('eAmount').value)||0,
+    notes:$('eNotes').value.trim()
+  });
+  if(save()){
+    e.target.reset();$('eDate').value=day();
+    renderExpenses();
+  }
+};
+
+function renderExpenses(){
+  let sum=data.expenses.reduce((a,x)=>a+x.amount,0);
+  $('expenseList').innerHTML=data.expenses.slice().reverse().map(x=>`
+    <div class="sbp-record">
+      <b>${esc2(x.name)}</b> · ${esc2(x.category)}
+      <p>${esc2(x.date)} · ${cash(x.amount)}</p>
+      <p>${esc2(x.notes||'')}</p>
+      <button class="btn small danger"
+        onclick="sbpDeleteExpense('${x.id}')">Delete</button>
+    </div>`).join('')||'<p>No expenses saved.</p>';
+  $('expenseTotal').innerHTML=
+    '<h3>Total expenses: '+cash(sum)+'</h3>';
+}
+
+window.sbpDeleteExpense=id=>{
+  if(confirm('Delete this expense?')){
+    data.expenses=data.expenses.filter(x=>x.id!==id);
+    save();renderExpenses();
+  }
+};
+
+/* BARCODE SCANNER */
+$('scanBarcode').onclick=async()=>{
+  let msg=$('scanMessage');
+  if(!('BarcodeDetector' in window)||
+     !navigator.mediaDevices?.getUserMedia){
+    msg.textContent='Barcode scanning is not supported in this browser. Type the barcode instead.';
+    return;
+  }
+  try{
+    let stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:'environment'}
+    });
+    let video=document.createElement('video');
+    video.srcObject=stream;
+    video.setAttribute('playsinline','');
+    await video.play();
+
+    let wrap=document.createElement('div');
+    wrap.className='sbp-record';
+    wrap.innerHTML='<p>Point camera at barcode</p><button class="btn danger">Stop</button>';
+    $('stockPanel').appendChild(wrap);
+
+    let stop=()=>{
+      stream.getTracks().forEach(t=>t.stop());
+      wrap.remove();
+    };
+    wrap.querySelector('button').onclick=stop;
+    wrap.prepend(video);
+
+    let detector=new BarcodeDetector();
+    async function scan(){
+      if(!wrap.isConnected)return;
+      try{
+        let codes=await detector.detect(video);
+        if(codes.length){
+          $('sCode').value=codes[0].rawValue;
+          msg.textContent='Barcode captured!';
+          stop();return;
+        }
+      }catch(e){}
+      requestAnimationFrame(scan);
+    }
+    scan();
+  }catch(e){
+    msg.textContent='Camera permission unavailable. Type the barcode instead.';
+  }
+};
+
+/* SEARCH ORDERS */
+let orderCard=document.querySelector('#ordersPanel .card');
+if(orderCard&&$('allOrders')){
+  let searchBox=document.createElement('div');
+  searchBox.innerHTML=`
+    <p>Search orders / customer / phone / product</p>
+    <input id="sbpOrderSearch" placeholder="Type to search">
+    <p>Filter by status</p>
+    <select id="sbpStatusFilter">
+      <option value="">All statuses</option>
+      <option>Pending</option>
+      <option>In Progress</option>
+      <option>Ready</option>
+      <option>Delivered</option>
+    </select>`;
+  orderCard.insertBefore(searchBox,$('allOrders'));
+
+  function refreshOrders(){
+    let q=$('sbpOrderSearch').value.toLowerCase();
+    let st=$('sbpStatusFilter').value;
+    let list=[...orders].sort((a,b)=>
+      (b.date||'').localeCompare(a.date||'')
+    ).filter(o=>
+      (!st||o.orderStatus===st)&&
+      (!q||[o.customer,o.phone,o.size,o.colour,o.fibre,
+        o.material,o.orderStatus].join(' ').toLowerCase().includes(q))
+    );
+    $('allOrders').innerHTML=list.length
+      ?list.map(orderCard).join('')
+      :'<p>No matching orders.</p>';
+  }
+  $('sbpOrderSearch').oninput=refreshOrders;
+  $('sbpStatusFilter').onchange=refreshOrders;
+}
+
+/* WHATSAPP ORDER SHARING */
+window.sbpWhatsApp=id=>{
+  let o=orders.find(x=>x.id===id);
+  if(!o)return;
+  let msg=`SHARMA BAG POINT
+Order details
+Customer: ${o.customer}
+Phone: ${o.phone}
+Date: ${o.date}
+Bags: ${o.quantity}
+Status: ${o.orderStatus}
+Total: ${cash(o.total)}
+Advance: ${cash(o.advance)}
+Balance: ${cash(o.balance)}`;
+  window.open('https://wa.me/'+String(o.phone).replace(/\D/g,'')+
+    '?text='+encodeURIComponent(msg),'_blank');
+};
+
+/* DARK MODE */
+let dark=document.createElement('button');
+dark.className='btn secondary';
+dark.id='sbpDarkToggle';
+dark.textContent='🌙 Dark mode';
+document.querySelector('header')?.appendChild(dark);
+
+if(localStorage.getItem('sbpDarkMode')==='1')
+  document.body.classList.add('sbp-dark');
+
+dark.onclick=()=>{
+  document.body.classList.toggle('sbp-dark');
+  localStorage.setItem('sbpDarkMode',
+    document.body.classList.contains('sbp-dark')?'1':'0');
+  dark.textContent=document.body.classList.contains('sbp-dark')
+    ?'☀️ Light mode':'🌙 Dark mode';
+};
+
+/* ADD OWNER TOOLS TO BACKUP */
+const oldExport=$('exportBtn').onclick;
+$('exportBtn').onclick=()=>{
+  let backup={
+    app:'Sharma Bag Point Order List',
+    version:3,
+    orders,
+    extra:JSON.parse(localStorage.getItem('sharmaBagPointExtra_v1')||
+      '{"repairs":[],"materials":[],"buys":[]}'),
+    ownerTools:data
+  };
+  let a=document.createElement('a');
+  let u=URL.createObjectURL(new Blob([JSON.stringify(backup,null,2)],
+    {type:'application/json'}));
+  a.href=u;
+  a.download='Sharma_Bag_Point_Backup_'+day()+'.json';
+  a.click();
+  URL.revokeObjectURL(u);
+};
+
+const oldImport=$('importFile').onchange;
+$('importFile').onchange=async e=>{
+  let f=e.target.files[0];if(!f)return;
+  try{
+    let b=JSON.parse(await f.text());
+    let list=Array.isArray(b)?b:b.orders;
+    if(!Array.isArray(list))throw Error();
+    if(!confirm('Restore backup? Current records will be replaced.'))return;
+    orders=list;persist();
+    if(b.extra)localStorage.setItem('sharmaBagPointExtra_v1',
+      JSON.stringify(b.extra));
+    if(b.ownerTools){data={...data,...b.ownerTools};save();}
+    renderAll();renderStock();renderExpenses();
+    alert('Backup restored.');
+  }catch(err){alert('That backup file is not valid.');}
+  e.target.value='';
+};
+
+renderStock();
+renderExpenses();
+
+})();
+</script>
+<!-- END SBP OWNER TOOLS UPGRADE -->
 </body></html>
