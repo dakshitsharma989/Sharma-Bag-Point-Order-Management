@@ -845,6 +845,41 @@ function changeOrderNumber(newNumber) {
   return newNumber;
 }
 
+function generateSBPOrderNumber() {
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const numbers = "0123456789";
+
+  let code = "";
+
+  for (let i = 0; i < 4; i++) {
+    code += letters[Math.floor(Math.random() * letters.length)];
+  }
+
+  for (let i = 0; i < 2; i++) {
+    code += numbers[Math.floor(Math.random() * numbers.length)];
+  }
+
+  return code;
+}
+
+function sendSBPOrderMessage(customerName, phoneNumber, orderNumber) {
+  const message =
+    `Hello ${customerName}! ❤️\n\n` +
+    `Thank you for choosing Sharma Bag Point!\n\n` +
+    `Your order has been successfully registered.\n\n` +
+    `Your Order Number is: ${orderNumber}\n\n` +
+    `Please keep this number safe for future order updates.\n\n` +
+    `Thank you!\nTeam Sharma Bag Point`;
+
+  const phone = phoneNumber.replace(/\D/g, "");
+
+  const whatsappURL =
+    "https://wa.me/" + phone +
+    "?text=" + encodeURIComponent(message);
+
+  window.open(whatsappURL, "_blank");
+}
+
 </script>
 <!-- END SBP OWNER TOOLS UPGRADE -->
 </body></html>
