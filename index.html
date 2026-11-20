@@ -1000,4 +1000,81 @@ function sendSBPOrderMessage(customerName, phoneNumber, orderNumber) {
  }
 </script>
 <!-- END SBP OWNER TOOLS UPGRADE -->
+ <div id="driverRating" style="
+display:none;position:fixed;inset:0;
+background:#0009;z-index:9999;
+align-items:center;justify-content:center;">
+
+<div style="
+background:white;color:#222;padding:25px;
+border-radius:15px;width:85%;max-width:350px;
+text-align:center;">
+
+<h2>⭐ Rate Sharma Bag Point</h2>
+<p>Select a rating</p>
+
+<div id="ratingStars" style="font-size:35px;">
+<span onclick="selectRating(1)">☆</span>
+<span onclick="selectRating(2)">☆</span>
+<span onclick="selectRating(3)">☆</span>
+<span onclick="selectRating(4)">☆</span>
+<span onclick="selectRating(5)">☆</span>
+</div>
+
+<p id="ratingText">Choose 1 to 5 stars</p>
+
+<button onclick="sendRatingWhatsApp()" style="
+background:#25D366;color:white;border:0;
+padding:12px 20px;border-radius:8px;">
+Send on WhatsApp
+</button>
+
+<br><br>
+<button onclick="closeRating()">Cancel</button>
+
+</div>
+</div>
+
+<script>
+let selectedRating = 0;
+
+function openRating() {
+ document.getElementById('driverRating').style.display='flex';
+}
+
+function closeRating() {
+ document.getElementById('driverRating').style.display='none';
+}
+
+function selectRating(n) {
+ selectedRating=n;
+
+ document.querySelectorAll('#ratingStars span')
+ .forEach((star,i)=>{
+ star.innerHTML=i<n?'★':'☆';
+ star.style.color='#f5a623';
+ });
+
+ document.getElementById('ratingText').innerText=
+ n+' Star'+(n>1?'s':'')+' Selected';
+}
+
+function sendRatingWhatsApp() {
+ if(!selectedRating) {
+  alert('Please select a rating first!');
+  return;
+ }
+
+ let message =
+ 'Thank you for choosing Sharma Bag Point! ❤️\n\n'+
+ 'Please share your honest experience with us on Google ⭐\n\n'+
+ 'Google Review: https://share.google/MhSPtUbVzSxFRJUK7\n\n'+
+ 'Thank you for your support!';
+
+ window.open(
+ 'https://wa.me/?text='+encodeURIComponent(message),
+ '_blank'
+ );
+}
+</script>
 </body></html>
