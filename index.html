@@ -115,6 +115,8 @@ footer{text-align:center;color:#8090a4;font-size:12px;padding:20px}
      <div class="field"><label for="balance">Balance remaining (₹)</label><input id="balance" type="number" readonly placeholder="Calculated automatically"></div>
     </div>
     <div class="actions">
+   
+
      <button class="btn gold" type="submit" id="saveBtn">Save Order</button>
      <button class="btn secondary" type="button" id="clearBtn">Clear Form</button>
     </div>
@@ -156,6 +158,18 @@ $('phone').addEventListener('blur',()=>{let phone=$('phone').value.trim();if(!ph
 $('photo').addEventListener('change',async e=>{let f=e.target.files[0];if(!f){currentPhoto='';return}if(f.size>450000){alert('Please choose an image smaller than 450 KB for this trial version.');e.target.value='';return}currentPhoto=await new Promise((res,rej)=>{let r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f)})});
 function resetForm(){ $('orderForm').reset();$('editId').value='';$('date').value=today();$('quantity').value=1;$('advance').value=0;currentPhoto='';orderStatus='Pending';paymentStatus='Not Paid';setChoices('orderChoices',orderStatus);setChoices('paymentChoices',paymentStatus);$('formTitle').textContent='Create New Order';$('saveBtn').textContent='Save Order';updateTotals()}
 $('clearBtn').onclick=resetForm;
+ function generateUniqueOrderNumber() {
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let code;
+  do {
+    code = "";
+    for (let i = 0; i < 4; i++) {
+      code += letters[Math.floor(Math.random() * 26)];
+    }
+    code += Math.floor(10 + Math.random() * 90);
+  } while (orders.some(o => o.orderNumber === code));
+  return code;
+}
 $('orderForm').addEventListener('submit',e=>{e.preventDefault();let phone=$('phone').value.trim(),name=$('customer').value.trim();if(!phone||!name)return alert('Please enter customer name and phone number.');let edit=$('editId').value;let existing=edit?orders.find(o=>o.id===edit):null;let record={id:edit||String(Date.now())+'-'+Math.random().toString(36).slice(2,7),created:existing?.created||new Date().toISOString(),date:$('date').value||today(),phone,customer:name,quantity:Number($('quantity').value)||1,customerNotes:$('notes').value,size:$('size').value,colour:$('colour').value,fibre:$('fibre').value,material:$('material').value,delivery:$('delivery').value,price:Number($('price').value)||0,total:Number($('total').value)||0,advance:Number($('advance').value)||0,balance:Number($('balance').value)||0,orderStatus,paymentStatus,photo:currentPhoto||existing?.photo||''};if(existing)orders=orders.map(o=>o.id===edit?record:o);else orders.push(record);if(persist()){alert(existing?'Order updated!':'Order saved!');resetForm();renderAll();showTab('ordersPanel')}});
 function orderCard(o){return `<div class="order"><div class="order-top"><div><b>${esc(o.customer)}</b> <span class="muted">· ${esc(o.phone)}</span>
 <span class="muted">${esc(o.phone)}</span>
