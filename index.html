@@ -810,6 +810,41 @@ renderStock();
 renderExpenses();
 
 })();
+ 
+function generateOrderNumber() {
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const numbers = "0123456789";
+
+  let code = "";
+
+  for (let i = 0; i < 4; i++) {
+    code += letters[Math.floor(Math.random() * letters.length)];
+  }
+
+  for (let i = 0; i < 2; i++) {
+    code += numbers[Math.floor(Math.random() * numbers.length)];
+  }
+
+  return code;
+}
+
+// Generate automatically when adding an order
+function createOrderNumber() {
+  return generateOrderNumber();
+}
+
+// Allow dad to change the order number
+function changeOrderNumber(newNumber) {
+  newNumber = newNumber.trim().toUpperCase();
+
+  if (!/^[A-Z0-9]{6}$/.test(newNumber)) {
+    alert("Order number must contain exactly 6 letters/numbers.");
+    return false;
+  }
+
+  return newNumber;
+}
+
 </script>
 <!-- END SBP OWNER TOOLS UPGRADE -->
 </body></html>
