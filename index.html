@@ -445,12 +445,18 @@ $('sbpSale').onsubmit=async e=>{
 
 function renderRepairs(){
  $('repairRecords').innerHTML=db.repairs.slice().reverse().map(r=>
- `<div class="sbp-record"><b>${esc(r.name)}</b> · ${esc(r.phone)}<p>${esc(r.details)}</p>
+ `<div class="sbp-record">
+ <b>${esc(r.name)}</b> · ${esc(r.phone)}
+ <a class="sbp-action" href="tel:${String(r.phone||'').replace(/[^0-9+]/g,'')}">Call</a>
+ <p>${esc(r.details)}</p>
  <p>${cash(r.amount)} · Advance ${cash(r.advance)} · Balance ${cash(Math.max(0,r.amount-r.advance))}</p>
  <p>Status: ${esc(r.status)} · ${esc(r.date)}</p>
  ${r.photo?`<img src="${r.photo}" style="max-width:120px">`:''}
- <button class="sbp-action" onclick="sbpDelete('repairs','${r.id}')">Delete</button></div>`
- ).join('')||'No repairs saved yet.'; 
+ <button class="sbp-action" onclick="sendWhatsApp('${esc(r.phone)}','ready')">READY 📦</button>
+ <button class="sbp-action" onclick="sendWhatsApp('${esc(r.phone)}','drivers')">DRIVERS 🚚</button>
+ <button class="sbp-action" onclick="sbpDelete('repairs','${r.id}')">Delete</button>
+ </div>`
+ ).join('')||'No repairs saved yet.';
 }
 function renderMaterials(){
  $('materialRecords').innerHTML=db.materials.slice().reverse().map(m=>
