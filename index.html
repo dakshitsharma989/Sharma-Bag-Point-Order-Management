@@ -223,12 +223,11 @@ $('orderForm').addEventListener('submit',e=>{
         waPhone='91'+waPhone.slice(1);
 
      
-      let message=
-        "Thank you for choosing Sharma Bag Point! ❤️+
-           your order is successfully saved come on when we call you 
-
-        "Thank you!\nTeam Sharma Bag Point";
-
+      let message =
+  "Thank you for choosing Sharma Bag Point! ❤️\n\n" +
+  "Your order has been successfully saved.\n" +
+  "We will contact you when it is ready.\n\n" +
+  "Thank you!\nTeam Sharma Bag Point";
       let url="https://wa.me/"+waPhone+
         "?text="+encodeURIComponent(message);
 
