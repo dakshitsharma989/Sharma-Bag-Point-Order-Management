@@ -210,4 +210,232 @@ if ("serviceWorker" in navigator) {
     );
  }
 </script>
+ 
+<style>
+.sbp-card{background:white;border:1px solid #dce4ee;border-radius:13px;padding:16px;margin:12px 0}
+.sbp-card h2{color:#142b4a;font-size:19px}
+.sbp-card input,.sbp-card textarea,.sbp-card select{width:100%;padding:10px;margin:5px 0 12px;border:1px solid #ccd6e2;border-radius:8px;box-sizing:border-box}
+.sbp-card label{display:block;font-weight:bold}
+.sbp-record{padding:12px;border:1px solid #dce4ee;border-radius:9px;margin:9px 0}
+.sbp-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.sbp-stat{background:#f1f5f9;padding:13px;border-radius:9px}
+.sbp-stat b{display:block;font-size:20px;color:#142b4a}
+.sbp-action{background:#142b4a;color:white;border:0;border-radius:8px;padding:11px 15px;font-weight:bold}
+</style>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const KEY='sbp_business_upgrade_v1';
+let db={repairs:[],materials:[],sales:[]};
+try{db=Object.assign(db,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(db));return true}catch(e){alert('Storage full. Try a smaller photo.');return false}};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const cash=n=>'₹'+(Number(n)||0).toLocaleString('en-IN');
+const today=()=>new Date().toISOString().slice(0,10);
+const month=()=>today().slice(0,7);
+const id=()=>Date.now()+'_'+Math.random().toString(36).slice(2,7);
+
+const nav=document.querySelector('.tabs');
+const main=document.querySelector('main');
+if(!nav||!main)return;
+
+const pages=[
+ ['repairPanel','🔧 Repair'],
+ ['materialPanel','📦 Material'],
+ ['buyPanel','🛍️ Buy'],
+ ['financePanel','💰 Finance'],
+ ['historyPanel','👤 Customer History'],
+ ['reportsPanel','📊 Reports']
+];
+
+pages.forEach(([pid,label])=>{
+ const btn=document.createElement('button');
+ btn.className='tab';btn.textContent=label;btn.dataset.tab=pid;
+ btn.onclick=()=>showTab(pid);
+ nav.appendChild(btn);
+ const section=document.createElement('section');
+ section.className='panel';section.id=pid;
+ main.appendChild(section);
+});
+
+$('repairPanel').innerHTML=`
+<div class="sbp-card"><h2>🔧 Bag Repair</h2>
+<form id="sbpRepair">
+<label>Customer name</label><input name="name" required>
+<label>Phone number</label><input name="phone" type="tel" required>
+<label>Bag photo (optional)</label><input name="photo" type="file" accept="image/*">
+<label>Repair details</label><textarea name="details" required></textarea>
+<label>Repair amount (₹)</label><input name="amount" type="number" min="0" required>
+<label>Advance received (₹)</label><input name="advance" type="number" min="0" value="0">
+<label>Status</label><select name="status"><option>Pending</option><option>In Progress</option><option>Ready</option><option>Delivered</option></select>
+<button class="sbp-action">Save Repair</button></form></div>
+<div class="sbp-card"><h2>Repair History</h2><div id="repairRecords"></div></div>`;
+
+$('materialPanel').innerHTML=`
+<div class="sbp-card"><h2>📦 Material Purchase</h2>
+<form id="sbpMaterial">
+<label>Material name</label><input name="name" required>
+<label>Quantity</label><input name="qty" required>
+<label>Total cost (₹)</label><input name="cost" type="number" min="0" required>
+<label>Supplier (optional)</label><input name="supplier">
+<label>Purchase date</label><input name="date" type="date" value="${today()}">
+<button class="sbp-action">Save Expense</button></form></div>
+<div class="sbp-card"><h2>Material Records</h2><div id="materialRecords"></div></div>`;
+
+$('buyPanel').innerHTML=`
+<div class="sbp-card"><h2>🛍️ Bag Sale</h2>
+<form id="sbpSale">
+<label>Bag photo (optional)</label><input name="photo" type="file" accept="image/*">
+<label>Bag name</label><input name="bag" required>
+<label>Customer name</label><input name="name" required>
+<label>Customer phone</label><input name="phone" type="tel">
+<label>Sale price (₹)</label><input name="price" type="number" min="0" required>
+<label>Purchase cost (₹)</label><input name="cost" type="number" min="0" value="0">
+<label>Amount received (₹)</label><input name="paid" type="number" min="0" value="0">
+<label>Sale date</label><input name="date" type="date" value="${today()}">
+<button class="sbp-action">Save Sale</button></form></div>
+<div class="sbp-card"><h2>Sales History</h2><div id="saleRecords"></div></div>`;
+
+$('financePanel').innerHTML=`
+<div class="sbp-card"><h2>💰 Financial Dashboard</h2>
+<div class="sbp-stats">
+<div class="sbp-stat">Order advances received<b id="fOrder">₹0</b></div>
+<div class="sbp-stat">Repair advances received<b id="fRepair">₹0</b></div>
+<div class="sbp-stat">Bag sale money received<b id="fSale">₹0</b></div>
+<div class="sbp-stat">Material expenses<b id="fExpense">₹0</b></div>
+<div class="sbp-stat">Total money received<b id="fIncome">₹0</b></div>
+<div class="sbp-stat">Cash balance<b id="fBalance">₹0</b></div>
+</div><p class="muted">Cash balance = recorded money received minus material expenses. It is not a full accounting profit calculation.</p></div>`;
+
+$('historyPanel').innerHTML=`
+<div class="sbp-card"><h2>👤 Customer History</h2>
+<label>Search phone number</label><input id="sbpPhone" type="tel" placeholder="Customer phone number">
+<button class="sbp-action" id="sbpSearch">Search</button>
+<div id="sbpHistory"></div></div>`;
+
+$('reportsPanel').innerHTML=`
+<div class="sbp-card"><h2>📊 Daily Report</h2>
+<label>Select date</label><input id="sbpDay" type="date" value="${today()}">
+<div id="sbpDaily"></div></div>
+<div class="sbp-card"><h2>📅 Monthly Report</h2>
+<label>Select month</label><input id="sbpMonth" type="month" value="${month()}">
+<div id="sbpMonthly"></div></div>`;
+
+function photo(file){
+ return new Promise(resolve=>{
+  if(!file){resolve('');return}
+  if(file.size>250000){alert('Photo must be smaller than 250 KB.');resolve('');return}
+  const r=new FileReader();
+  r.onload=()=>resolve(r.result);
+  r.onerror=()=>resolve('');
+  r.readAsDataURL(file);
+ });
+}
+
+function record(title,detail,date,amount){
+ return `<div class="sbp-record"><b>${esc(title)}</b><div class="muted">${esc(detail)}</div><div class="muted">${esc(date)} · ${cash(amount)}</div></div>`;
+}
+
+$('sbpRepair').onsubmit=async e=>{
+ e.preventDefault();
+ const f=e.target;
+ const p=await photo(f.photo.files[0]);
+ const amount=Number(f.amount.value)||0;
+ const advance=Number(f.advance.value)||0;
+ db.repairs.push({id:id(),name:f.name.value,phone:f.phone.value,details:f.details.value,amount,advance,status:f.status.value,date:today(),photo:p});
+ if(save()){f.reset();renderRepairs();alert('Repair saved!')}
+};
+
+$('sbpMaterial').onsubmit=e=>{
+ e.preventDefault();const f=e.target;
+ db.materials.push({id:id(),name:f.name.value,qty:f.qty.value,cost:Number(f.cost.value)||0,supplier:f.supplier.value,date:f.date.value||today()});
+ if(save()){f.reset();f.date.value=today();renderMaterials();renderFinance();renderReports();alert('Material expense saved!')}
+};
+
+$('sbpSale').onsubmit=async e=>{
+ e.preventDefault();const f=e.target;
+ const p=await photo(f.photo.files[0]);
+ db.sales.push({id:id(),bag:f.bag.value,name:f.name.value,phone:f.phone.value,price:Number(f.price.value)||0,cost:Number(f.cost.value)||0,paid:Number(f.paid.value)||0,date:f.date.value||today(),photo:p});
+ if(save()){f.reset();f.date.value=today();renderSales();renderFinance();renderReports();alert('Sale saved!')}
+};
+
+function renderRepairs(){
+ $('repairRecords').innerHTML=db.repairs.slice().reverse().map(r=>
+ `<div class="sbp-record"><b>${esc(r.name)}</b> · ${esc(r.phone)}<p>${esc(r.details)}</p>
+ <p>${cash(r.amount)} · Advance ${cash(r.advance)} · Balance ${cash(Math.max(0,r.amount-r.advance))}</p>
+ <p>Status: ${esc(r.status)} · ${esc(r.date)}</p>
+ ${r.photo?`<img src="${r.photo}" style="max-width:120px">`:''}
+ <button class="sbp-action" onclick="sbpDelete('repairs','${r.id}')">Delete</button></div>`
+ ).join('')||'No repairs saved yet.'; 
+}
+function renderMaterials(){
+ $('materialRecords').innerHTML=db.materials.slice().reverse().map(m=>
+ record(m.name,'Quantity: '+m.qty+' · Supplier: '+(m.supplier||'—'),m.date,m.cost)+
+ `<button class="sbp-action" onclick="sbpDelete('materials','${m.id}')">Delete</button>`
+ ).join('')||'No material purchases saved.';
+}
+function renderSales(){
+ $('saleRecords').innerHTML=db.sales.slice().reverse().map(s=>
+ record(s.bag,'Customer: '+s.name+' · Phone: '+s.phone+' · Received: '+cash(s.paid),s.date,s.price)+
+ `<div class="muted">Purchase cost: ${cash(s.cost)} · Sale margin: ${cash(s.price-s.cost)}</div>`+
+ (s.photo?`<img src="${s.photo}" style="max-width:120px">`:'' )+
+ `<button class="sbp-action" onclick="sbpDelete('sales','${s.id}')">Delete</button>`
+ ).join('')||'No sales saved.';
+}
+window.sbpDelete=(type,recordId)=>{
+ if(!confirm('Delete this record?'))return;
+ db[type]=db[type].filter(x=>x.id!==recordId);
+ if(save()){renderRepairs();renderMaterials();renderSales();renderFinance();renderReports()}
+};
+
+function totals(datePrefix){
+ const orders=(window.orders||[]).filter(o=>(o.date||'').startsWith(datePrefix));
+ const repairs=db.repairs.filter(r=>(r.date||'').startsWith(datePrefix));
+ const sales=db.sales.filter(s=>(s.date||'').startsWith(datePrefix));
+ const materials=db.materials.filter(m=>(m.date||'').startsWith(datePrefix));
+ const orderMoney=orders.reduce((a,o)=>a+(Number(o.advance)||0),0);
+ const repairMoney=repairs.reduce((a,r)=>a+(Number(r.advance)||0),0);
+ const saleMoney=sales.reduce((a,s)=>a+(Number(s.paid)||0),0);
+ const expenses=materials.reduce((a,m)=>a+(Number(m.cost)||0),0);
+ return {orderMoney,repairMoney,saleMoney,expenses,income:orderMoney+repairMoney+saleMoney,balance:orderMoney+repairMoney+saleMoney-expenses};
+}
+function renderFinance(){
+ const t=totals('');
+ $('fOrder').textContent=cash(t.orderMoney);
+ $('fRepair').textContent=cash(t.repairMoney);
+ $('fSale').textContent=cash(t.saleMoney);
+ $('fExpense').textContent=cash(t.expenses);
+ $('fIncome').textContent=cash(t.income);
+ $('fBalance').textContent=cash(t.balance);
+}
+function renderReports(){
+ const d=totals($('sbpDay').value||today());
+ $('sbpDaily').innerHTML=`<p>Money received: <b>${cash(d.income)}</b></p><p>Material expenses: <b>${cash(d.expenses)}</b></p><p>Cash balance: <b>${cash(d.balance)}</b></p>`;
+ const m=totals($('sbpMonth').value||month());
+ $('sbpMonthly').innerHTML=`<p>Money received: <b>${cash(m.income)}</b></p><p>Material expenses: <b>${cash(m.expenses)}</b></p><p>Cash balance: <b>${cash(m.balance)}</b></p>`;
+}
+$('sbpDay').onchange=renderReports;
+$('sbpMonth').onchange=renderReports;
+
+$('sbpSearch').onclick=()=>{
+ const phone=$('sbpPhone').value.replace(/\D/g,'');
+ if(!phone){$('sbpHistory').textContent='Enter a phone number.';return}
+ const oldOrders=(window.orders||[]).filter(o=>String(o.phone||'').replace(/\D/g,'')===phone);
+ const repairs=db.repairs.filter(r=>String(r.phone||'').replace(/\D/g,'')===phone);
+ const sales=db.sales.filter(s=>String(s.phone||'').replace(/\D/g,'')===phone);
+ $('sbpHistory').innerHTML=
+ '<h3>Existing Orders</h3>'+oldOrders.map(o=>record(o.customer,'Order status: '+o.orderStatus,o.date,o.total)).join('')+
+ '<h3>Repairs</h3>'+repairs.map(r=>record(r.name,r.details+' · '+r.status,r.date,r.amount)).join('')+
+ '<h3>Bag Purchases</h3>'+sales.map(s=>record(s.name,s.bag,s.date,s.price)).join('')+
+ (oldOrders.length+repairs.length+sales.length?'':'No customer records found.');
+};
+
+function refresh(){
+ renderRepairs();renderMaterials();renderSales();renderFinance();renderReports();
+}
+refresh();
+})();
+</script>
+
 </body></html>
