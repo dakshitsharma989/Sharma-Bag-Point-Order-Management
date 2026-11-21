@@ -38,6 +38,13 @@ label{display:block;font-size:13px;font-weight:700;color:#40516a;margin:0 0 5px}
 footer{text-align:center;color:#8090a4;font-size:12px;padding:20px}
 @media(max-width:700px){.grid,.row{grid-template-columns:1fr}.three{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:1/-1}header{padding:17px}.brand h1{font-size:18px}}
 @media print{header,.tabs,.no-print,footer{display:none!important}body{background:white}.panel{display:none!important}#ordersPanel{display:block!important}.card{box-shadow:none}}
+.sbp-repair-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
 </style>
 </head>
 <body>
@@ -966,13 +973,7 @@ function sendSBPOrderMessage(customerName, phoneNumber, orderNumber) {
 
   window.open(whatsappURL, "_blank");
 }
-.sbp-repair-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  flex-wrap:wrap;
-}
+
 
 .sbp-call-btn{
   background:#16834a;
