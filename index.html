@@ -868,14 +868,7 @@ dark.onclick=()=>{
 const oldExport=$('exportBtn').onclick;
 $('exportBtn').onclick=()=>{
   
-let backup={
-  app:'Sharma Bag Point Order List',
-  version:4,
-  orders,
-  extra:JSON.parse(localStorage.getItem('sharmaBagPointExtra_v1')||'{"repairs":[],"materials":[],"buys":[]}'),
-  businessData:JSON.parse(localStorage.getItem('sbp_business_upgrade_v1')||'{"repairs":[],"materials":[],"sales":[]}'),
-  ownerTools:data
-};
+
 
     app:'Sharma Bag Point Order List',
     version:3,
@@ -904,11 +897,7 @@ $('importFile').onchange=async e=>{
     orders=list;persist();
     if(b.extra)localStorage.setItem('sharmaBagPointExtra_v1', 
       
-if(b.businessData)
-  localStorage.setItem(
-    'sbp_business_upgrade_v1',
-    JSON.stringify(b.businessData)
-  );
+
                              
       JSON.stringify(b.extra));
     if(b.ownerTools){data={...data,...b.ownerTools};save();}
