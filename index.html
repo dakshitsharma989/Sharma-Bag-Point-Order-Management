@@ -858,27 +858,33 @@ dark.onclick=()=>{
 };
 
 /* ADD OWNER TOOLS TO BACKUP */
-const oldExport=$('exportBtn').onclick;
 $('exportBtn').onclick=()=>{
-  
-
-
+  const backup={
     app:'Sharma Bag Point Order List',
     version:3,
-    orders,
-    extra:JSON.parse(localStorage.getItem('sharmaBagPointExtra_v1')||
-      '{"repairs":[],"materials":[],"buys":[]}'),
-    ownerTools:data
+    orders:orders,
+    businessData:JSON.parse(
+      localStorage.getItem('sbp_business_upgrade_v1')||'{"repairs":[],"materials":[],"sales":[]}'
+    ),
+    ownerTools:JSON.parse(
+      localStorage.getItem('sbpOwnerTools_v1')||'{"stock":[],"expenses":[]}'
+    ),
+    oldExtra:JSON.parse(
+      localStorage.getItem('sharmaBagPointExtra_v1')||'{}'
+    )
   };
-  let a=document.createElement('a');
-  let u=URL.createObjectURL(new Blob([JSON.stringify(backup,null,2)],
-    {type:'application/json'}));
-  a.href=u;
-  a.download='Sharma_Bag_Point_Backup_'+day()+'.json';
-  a.click();
-  URL.revokeObjectURL(u);
-};
 
+  const blob=new Blob(
+    [JSON.stringify(backup,null,2)],
+    {type:'application/json'}
+  );
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='Sharma_Bag_Point_Backup_'+today()+'.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+  
 const oldImport=$('importFile').onchange;
 $('importFile').onchange=async e=>{
   let f=e.target.files[0];if(!f)return;
