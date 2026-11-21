@@ -428,7 +428,7 @@ $('sbpRepair').onsubmit=async e=>{
  const advance=Number(f.advance.value)||0;
  db.repairs.push({id:id(),name:f.name.value,phone:f.phone.value,details:f.details.value,amount,advance,status:f.status.value,date:today(),photo:p});
  if(save()){f.reset();renderRepairs();alert('Repair saved!')}
-
+ 
 $('sbpSale').onsubmit=async e=>{
  e.preventDefault();const f=e.target;
  const p=await photo(f.photo.files[0]);
