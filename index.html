@@ -867,7 +867,16 @@ dark.onclick=()=>{
 /* ADD OWNER TOOLS TO BACKUP */
 const oldExport=$('exportBtn').onclick;
 $('exportBtn').onclick=()=>{
-  let backup={
+  
+let backup={
+  app:'Sharma Bag Point Order List',
+  version:4,
+  orders,
+  extra:JSON.parse(localStorage.getItem('sharmaBagPointExtra_v1')||'{"repairs":[],"materials":[],"buys":[]}'),
+  businessData:JSON.parse(localStorage.getItem('sbp_business_upgrade_v1')||'{"repairs":[],"materials":[],"sales":[]}'),
+  ownerTools:data
+};
+
     app:'Sharma Bag Point Order List',
     version:3,
     orders,
@@ -893,7 +902,14 @@ $('importFile').onchange=async e=>{
     if(!Array.isArray(list))throw Error();
     if(!confirm('Restore backup? Current records will be replaced.'))return;
     orders=list;persist();
-    if(b.extra)localStorage.setItem('sharmaBagPointExtra_v1',
+    if(b.extra)localStorage.setItem('sharmaBagPointExtra_v1', 
+      
+if(b.businessData)
+  localStorage.setItem(
+    'sbp_business_upgrade_v1',
+    JSON.stringify(b.businessData)
+  );
+                             
       JSON.stringify(b.extra));
     if(b.ownerTools){data={...data,...b.ownerTools};save();}
     renderAll();renderStock();renderExpenses();
