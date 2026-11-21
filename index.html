@@ -427,9 +427,16 @@ $('sbpRepair').onsubmit=async e=>{
  const amount=Number(f.amount.value)||0;
  const advance=Number(f.advance.value)||0;
  db.repairs.push({id:id(),name:f.name.value,phone:f.phone.value,details:f.details.value,amount,advance,status:f.status.value,date:today(),photo:p});
- if(save()){f.reset();renderRepairs();alert('Repair saved!')}
-};
+ if(save()){
+  const phone = f.phone.value.replace(/\D/g,'');
+  const whatsappPhone = phone.length === 10 ? '91' + phone : phone;
 
+  sendRepairThankYou(whatsappPhone);
+
+  f.reset();
+  renderRepairs();
+  alert('Repair saved!');
+}
 $('sbpMaterial').onsubmit=e=>{
  e.preventDefault();const f=e.target;
  db.materials.push({id:id(),name:f.name.value,qty:f.qty.value,cost:Number(f.cost.value)||0,supplier:f.supplier.value,date:f.date.value||today()});
