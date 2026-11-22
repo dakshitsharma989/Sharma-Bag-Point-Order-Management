@@ -885,7 +885,51 @@ $('exportBtn').onclick=()=>{
   URL.revokeObjectURL(a.href);
 };
   
-const oldImport=$('importFile').onchange;
+$('importFile').onchange=async e=>{
+  let f=e.target.files[0];
+  if(!f)return;
+
+  try{
+    let b=JSON.parse(await f.text());
+    let list=Array.isArray(b)?b:b.orders;
+
+    if(!Array.isArray(list))throw Error();
+
+    if(!confirm('Restore backup? Current records will be replaced.'))return;
+
+    orders=list;
+    persist();
+
+    if(b.businessData){
+      localStorage.setItem(
+        'sbp_business_upgrade_v1',
+        JSON.stringify(b.businessData)
+      );
+    }
+
+    if(b.ownerTools){
+      data={...data,...b.ownerTools};
+      save();
+    }
+
+    if(b.oldExtra){
+      localStorage.setItem(
+        'sharmaBagPointExtra_v1',
+        JSON.stringify(b.oldExtra)
+      );
+    }
+
+    renderAll();
+    renderStock();
+    renderExpenses();
+
+    alert('Backup restored. Please reload the page.');
+  }catch(err){
+    alert('That backup file is not valid.');
+  }
+
+  e.target.value='';
+};
 $('importFile').onchange=async e=>{
   let f=e.target.files[0];if(!f)return;
   try{
